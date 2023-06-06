@@ -38,12 +38,12 @@
   .all {
     width: 100%;
     height: 100%;
-    background-color: #353331;
+    background-color: #e07000;
 
     .top {
       width: 100%;
       height: $top-height;
-      background-color: #151311;
+      background-color: #0e9170;
     }
 
     .bottom {
