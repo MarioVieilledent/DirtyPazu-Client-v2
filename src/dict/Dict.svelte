@@ -1,56 +1,232 @@
 <script lang="ts">
-    function exchangeCodeForToken(code: string): Promise<Response> {
-        const clientId = "YOUR_CLIENT_ID";
-        const clientSecret = "YOUR_CLIENT_SECRET";
-        const redirectUri = encodeURIComponent(
-            "http://localhost:5000/auth/callback"
-        );
+    import { onMount } from "svelte";
+    import { dev, type DibiWord } from "../types";
+    import Word from "./Word.svelte";
 
-        const tokenEndpoint = "https://discord.com/api/oauth2/token";
-        const data = new URLSearchParams();
-        data.append("client_id", clientId);
-        data.append("client_secret", clientSecret);
-        data.append("grant_type", "authorization_code");
-        data.append("code", code);
-        data.append("redirect_uri", redirectUri);
+    let fetchingWords: "fetching" | "ok" | "error" = "fetching";
 
-        return fetch(tokenEndpoint, {
-            method: "POST",
-            body: data,
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                const accessToken = data.access_token;
-                const refreshToken = data.refresh_token;
-                // Handle access token and refresh token as needed
-                return accessToken;
-            });
-    }
+    // All Dibi words of the dictionary
+    let words: DibiWord[] = [];
 
-    // After receiving the callback with the authorization code
-    const code = new URLSearchParams(window.location.search).get("code");
+    // Filtered words with searching tools
+    let filteredWords: DibiWord[] = [];
+    let filteringOption = {
+        dibi: true,
+        french: true,
+        english: true,
+        author: false,
+    };
 
-    if (code) {
-        exchangeCodeForToken(code)
-            .then((accessToken) => {
-                // Use the access token to make requests to the Discord API
-                fetch("https://discord.com/api/v13/users/@me", {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                })
-                    .then((response) => response.json())
-                    .then((user) => {
-                        const username = user.username;
-                        const profilePicture = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-                        // Handle user information as needed
-                    })
-                    .catch((error) => {
-                        // Handle error from fetching user information
-                    });
+    // Number of words displayed at once
+    let wordToDisplay: DibiWord[] = [];
+    let nbWordsDisplayed: number = 100;
+
+    // Filtering options
+    let search: string = "";
+
+    // Sorting options
+    let sortBy: "dibi" | "french" | "date" = "date";
+    let sortOrder: "asc" | "desc" = "desc";
+
+    // Simple or detailed search
+    let detailedSearch: boolean = false;
+
+    onMount(() => {
+        setTimeout(() => {
+            document.getElementById("inputSimpleSearch").focus();
+        }, 150);
+
+        let apiUrl = dev ? "http://localhost:5000/" : window.location.href;
+        fetch(apiUrl + "dict")
+            .then((d) => d.json())
+            .then((res) => {
+                words = res;
+                fetchingWords = "ok";
+                filter();
+                sort();
+                getWordsToDisplay();
             })
-            .catch((error) => {
-                // Handle error from exchanging code for access token
+            .catch((err) => {
+                console.error(err);
+                fetchingWords = "error";
             });
+    });
+
+    // Fetching dictionary
+
+    // Filter words taking in account filtering options
+    const filter = () => {
+        let lowerCaseSearch: string = search.toLowerCase();
+        filteredWords = [];
+        words.forEach((word) => {
+            let fits = false;
+            if (
+                filteringOption.dibi &&
+                word.dibi.toLowerCase().includes(lowerCaseSearch)
+            ) {
+                fits = true;
+            }
+            if (
+                filteringOption.french &&
+                word.french.toLowerCase().includes(lowerCaseSearch)
+            ) {
+                fits = true;
+            }
+            if (
+                filteringOption.english &&
+                word.english.toLowerCase().includes(lowerCaseSearch)
+            ) {
+                fits = true;
+            }
+            if (
+                filteringOption.author &&
+                word.author.toLowerCase().includes(lowerCaseSearch)
+            ) {
+                fits = true;
+            }
+            if (fits) {
+                filteredWords.push(word);
+            }
+        });
+        sort();
+        getWordsToDisplay();
+    };
+
+    // Sort filtered words
+    function sort(): void {
+        filteredWords.sort((a: DibiWord, b: DibiWord) => {
+            let diff: number;
+            switch (sortBy) {
+                case "dibi":
+                    diff = a.dibi.localeCompare(b.dibi);
+                case "french":
+                    diff = a.french.localeCompare(b.french);
+                case "date":
+                    diff = a.date.localeCompare(b.date);
+            }
+            if (sortOrder === "asc") {
+                return diff;
+            } else {
+                return -diff;
+            }
+        });
     }
+
+    // Once words filtered and sorted, take a bunch of them to display
+    function getWordsToDisplay(): void {
+        wordToDisplay = filteredWords.slice(0, nbWordsDisplayed);
+    }
+
+    // Helper function
+    function setSearch(event: any): void {
+        search = event.target.value;
+    }
+
+    // Debounce function for not triggering filter function each new char typed in search bar
+    const debounce = (fn: () => void, ms = 150) => {
+        let timeoutId: ReturnType<typeof setTimeout>;
+        return function (this: any, ...args: any[]) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => fn.apply(this, args), ms);
+        };
+    };
 </script>
+
+<div class="container fc">
+    {#if fetchingWords === "fetching"}
+        <span>Chargement des mots...</span>
+    {:else if fetchingWords === "ok"}
+        <div class="search f">
+            {#if detailedSearch}
+                <div class="detailed-search" />
+            {:else}
+                <div class="simple-search f">
+                    <div class="simple-search-bar">
+                        <input
+                            id="inputSimpleSearch"
+                            class="input-simple-search"
+                            type="text"
+                            placeholder="Rechercher"
+                            bind:value={search}
+                            on:input={(event) => {
+                                setSearch(event);
+                                debounce(filter)();
+                            }}
+                        />
+                        <div class="cross" />
+                    </div>
+                    <div class="more f">
+                        <img
+                            src="/assets/chevron-down-solid.svg"
+                            alt="Bouton plus de paramètres de recherche"
+                        />
+                    </div>
+                </div>
+            {/if}
+        </div>
+        <div class="list">
+            {#each wordToDisplay as word}
+                <Word {word} />
+            {/each}
+        </div>
+    {:else}
+        <span>Erreur lors de la récupération des mots.</span>
+    {/if}
+</div>
+
+<style lang="scss">
+    $simple-search-height: 42px;
+    .container {
+        width: 100%;
+        height: 100%;
+        padding: 6px;
+
+        .search {
+            width: 100%;
+            height: $simple-search-height;
+
+            .detailed-search {
+                width: 100%;
+                height: $simple-search-height;
+            }
+
+            .simple-search {
+                width: 100%;
+                height: 100%;
+                justify-content: space-between;
+
+                .simple-search-bar {
+                    width: calc(100% - 36px - 6px);
+                    height: 36px;
+                    background-color: #494847;
+                    border-radius: 18px;
+
+                    .input-simple-search {
+                        width: 100%;
+                        height: 100%;
+                        background-color: transparent;
+                        border: none;
+                        padding: 6px 6px 6px 14px;
+                        border-radius: 18px;
+                    }
+                }
+
+                .more {
+                    width: 36px;
+                    height: 36px;
+                    background-color: #494847;
+                    border-radius: 18px;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .list {
+            width: 100%;
+            height: calc(100% - $simple-search-height);
+            overflow-y: auto;
+        }
+    }
+</style>

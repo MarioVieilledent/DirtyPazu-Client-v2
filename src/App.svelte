@@ -2,14 +2,19 @@
   import Header from "./Header.svelte";
   import Nav from "./Nav.svelte";
   import DiscordAuth from "./DiscordAuth.svelte";
+  import DiscordAccount from "./DiscordAccount.svelte";
   import Dict from "./dict/Dict.svelte";
+  import { currentPage } from "./types";
 
-  let currentPage: 'home' | 'dict' | 'discordAuth';
+  let discordAuthCode: string;
 
-  if (window.location.pathname === '/auth') {
-    currentPage = 'discordAuth';
+  console.log(window.location.pathname);
+
+  if (window.location.pathname.includes("/auth")) {
+    discordAuthCode = window.location.search.split("code=")[1];
+    $currentPage = "discordAuth";
   } else {
-    currentPage = 'dict';
+    $currentPage = "dict";
   }
 </script>
 
@@ -22,10 +27,12 @@
       <Nav />
     </div>
     <div class="right">
-      {#if currentPage === "dict"}
+      {#if $currentPage === "dict"}
         <Dict />
-      {:else if currentPage === "discordAuth"}
-        <DiscordAuth />
+      {:else if $currentPage === "discordAuth"}
+        <DiscordAuth code={discordAuthCode} />
+      {:else if $currentPage === "discordAccount"}
+        <DiscordAccount />
       {/if}
     </div>
   </div>
@@ -43,7 +50,7 @@
     .top {
       width: 100%;
       height: $top-height;
-      background-color: #353331;
+      background-color: #151311;
     }
 
     .bottom {
@@ -54,6 +61,7 @@
         width: $left-width;
         height: 100%;
         background-color: #252321;
+        overflow-y: auto;
       }
 
       .right {

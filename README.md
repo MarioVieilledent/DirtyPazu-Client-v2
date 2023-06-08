@@ -1,6 +1,6 @@
 # DirtyPazu-Client-v2
 
-Web App dictionnaire de la langue Dibi.
+Web App v2 du dictionnaire de la langue Dibi.
 
 Ce projet est la v2 du dictionnaire en ligne, le [premier dictionnaire](https://dibi-dictionary.onrender.com/) reste disponible et fonctionnel.
 
