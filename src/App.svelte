@@ -8,8 +8,6 @@
 
   let discordAuthCode: string;
 
-  console.log(window.location.pathname);
-
   if (window.location.pathname.includes("/auth")) {
     discordAuthCode = window.location.search.split("code=")[1];
     $currentPage = "discordAuth";
