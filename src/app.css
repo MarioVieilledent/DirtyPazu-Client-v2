@@ -51,13 +51,11 @@ body {
 .Adjective { color: #8E8; }
 .Adverb { color: #EA8; }
 .Conjonction { color: #E8E; }
-.Particule { color: #EE8; }
 .Preposition { color: rgb(197, 194, 194); }
 .Interjection { color: #A8E; }
-
-.Noun, .Pronoun, .Verb, .Adjective, .Adverb, .Conjonction, .Particule, .Preposition, .Interjection {
-  font-weight: 600;
-}
+.SpiritWord { color: rgb(111, 219, 147); }
+.FunctionParticule { color: #EE8; }
+.TransformationParticule { color: #EE8; }
 
 img {
   width: 16px;

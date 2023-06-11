@@ -1,12 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { dev, type DibiWord } from "../types";
     import Word from "./Word.svelte";
-
-    let fetchingWords: "fetching" | "ok" | "error" = "fetching";
-
-    // All Dibi words of the dictionary
-    let words: DibiWord[] = [];
+    import { type DibiWord } from "../types";
+    import { words, fetchingWords } from "../dictionary"
 
     // Filtered words with searching tools
     let filteredWords: DibiWord[] = [];
@@ -32,24 +28,10 @@
     let detailedSearch: boolean = false;
 
     onMount(() => {
+        // Auto focus on search bar
         setTimeout(() => {
             document.getElementById("inputSimpleSearch").focus();
-        }, 150);
-
-        let apiUrl = dev ? "http://localhost:5000/" : window.location.href;
-        fetch(apiUrl + "dict")
-            .then((d) => d.json())
-            .then((res) => {
-                words = res;
-                fetchingWords = "ok";
-                filter();
-                sort();
-                getWordsToDisplay();
-            })
-            .catch((err) => {
-                console.error(err);
-                fetchingWords = "error";
-            });
+        }, 200);
     });
 
     // Fetching dictionary
@@ -117,7 +99,7 @@
         wordToDisplay = filteredWords.slice(0, nbWordsDisplayed);
     }
 
-    // Helper function
+    // Helper function for search
     function setSearch(event: any): void {
         search = event.target.value;
     }
@@ -157,7 +139,7 @@
                     </div>
                     <div class="more f">
                         <img
-                            src="/assets/chevron-down-solid.svg"
+                            src="/public/chevron-down-solid.svg"
                             alt="Bouton plus de paramètres de recherche"
                         />
                     </div>

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { frenchPartOfSpeech } from "../services";
     import type { DibiWord } from "../types";
 
     // Word to display
@@ -41,7 +42,7 @@
                     </div>
                     <div class="value-div">
                         <span class={"value " + word.partOfSpeech}
-                            >{word.partOfSpeech}</span
+                            >{frenchPartOfSpeech(word.partOfSpeech)}</span
                         >
                     </div>
                 </div>
@@ -114,6 +115,7 @@
                 .dibi {
                     font-size: 18px;
                     margin: 0px 12px 0px 6px;
+                    font-weight: 600;
                 }
 
                 .french {
@@ -154,8 +156,8 @@
                 }
 
                 .value-div {
-                        color: #ccc;
-                        
+                    color: #ccc;
+
                     .value {
                         font-size: 13px;
                     }

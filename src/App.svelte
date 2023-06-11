@@ -5,6 +5,8 @@
   import DiscordAccount from "./DiscordAccount.svelte";
   import Dict from "./dict/Dict.svelte";
   import { currentPage } from "./types";
+  import { onMount } from "svelte";
+    import { loadDictionary } from "./dictionary";
 
   let discordAuthCode: string;
 
@@ -14,6 +16,10 @@
   } else {
     $currentPage = "dict";
   }
+
+  onMount(() => {
+    loadDictionary();
+  });
 </script>
 
 <div class="all fc">
