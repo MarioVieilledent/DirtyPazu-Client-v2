@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { LOCAL_STORAGE_DISCORD_USER, dev } from "./types";
-    import { discordUser, getDiscordAvatarUrl } from "./discord";
+    import { LOCAL_STORAGE_DISCORD_USER, currentPage, dev } from "./types";
+    import { discordConnected, user } from "./discord";
 
     export let code: string;
 
@@ -11,19 +11,13 @@
             .then((d) => d.json())
             .then((res) => {
                 localStorage.setItem(LOCAL_STORAGE_DISCORD_USER, JSON.stringify(res))
-                $discordUser = res;
+                $user = res;
+                console.log(res)
+                $discordConnected = true;
+                $currentPage = 'discordAccount';
             })
             .catch((err) => {
                 console.error(err);
             });
     });
 </script>
-
-{#if $discordUser}
-    <img
-        style="width: 42px; height: 42px; border-radius: 42px;"
-        src={getDiscordAvatarUrl($discordUser)}
-        alt=""
-    />
-    <span>Connecté en tant que {$discordUser.username}</span>
-{/if}

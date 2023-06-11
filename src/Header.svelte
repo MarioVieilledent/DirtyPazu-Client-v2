@@ -1,7 +1,7 @@
 <script lang="ts">
   import {
     discordConnected,
-    discordUser,
+    user,
     getDiscordAvatarUrl,
   } from "./discord";
     import { currentPage } from "./types";
@@ -11,13 +11,12 @@
     const ulrSvelte = 'https://discord.com/api/oauth2/authorize?client_id=1115564047048392754&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fauth&response_type=code&scope=identify%20email'; 
 
   function login() {
-    window.location.href = urlProd;
+    window.location.href = ulrSvelte;
   }
 </script>
 
 <div class="header f">
   <div class="left f">
-    <span>Site en construction, je cherche des devs !</span>
   </div>
   <div class="center f">
     <h1>Dibi v2</h1>
@@ -27,7 +26,7 @@
       <img
         class="avatar"
         title="Connexion Discord"
-        src={getDiscordAvatarUrl($discordUser)}
+        src={getDiscordAvatarUrl($user)}
         alt="Discord avatar"
         on:keypress={() => {}}
         on:click={() => $currentPage = 'discordAccount'}

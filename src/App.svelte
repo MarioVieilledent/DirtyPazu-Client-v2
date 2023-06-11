@@ -3,10 +3,13 @@
   import Nav from "./Nav.svelte";
   import DiscordAuth from "./DiscordAuth.svelte";
   import DiscordAccount from "./DiscordAccount.svelte";
+  import Home from "./home/Home.svelte";
   import Dict from "./dict/Dict.svelte";
+  import Suggest from "./suggest/Suggest.svelte";
+
   import { currentPage } from "./types";
   import { onMount } from "svelte";
-    import { loadDictionary } from "./dictionary";
+  import { loadDictionary } from "./dictionary";
 
   let discordAuthCode: string;
 
@@ -31,8 +34,12 @@
       <Nav />
     </div>
     <div class="right">
-      {#if $currentPage === "dict"}
+      {#if $currentPage === "home"}
+        <Home />
+      {:else if $currentPage === "dict"}
         <Dict />
+      {:else if $currentPage === "suggest"}
+        <Suggest />
       {:else if $currentPage === "discordAuth"}
         <DiscordAuth code={discordAuthCode} />
       {:else if $currentPage === "discordAccount"}

@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import Word from "./Word.svelte";
     import { type DibiWord } from "../types";
-    import { words, fetchingWords } from "../dictionary"
+    import { words, fetchingWords } from "../dictionary";
 
     // Filtered words with searching tools
     let filteredWords: DibiWord[] = [];
@@ -21,7 +21,7 @@
     let search: string = "";
 
     // Sorting options
-    let sortBy: "dibi" | "french" | "date" = "date";
+    let sortBy: "dibi" | "french" | "date" | "relevance" = "relevance";
     let sortOrder: "asc" | "desc" = "desc";
 
     // Simple or detailed search
@@ -35,34 +35,39 @@
     });
 
     // Fetching dictionary
+    $: {
+        if ($fetchingWords === "ok") {
+            filter();
+        }
+    }
 
     // Filter words taking in account filtering options
     const filter = () => {
-        let lowerCaseSearch: string = search.toLowerCase();
+        let lowerCaseSearch: RegExp = new RegExp(search.toLowerCase());
         filteredWords = [];
         words.forEach((word) => {
             let fits = false;
             if (
                 filteringOption.dibi &&
-                word.dibi.toLowerCase().includes(lowerCaseSearch)
+                lowerCaseSearch.test(word.dibi.toLowerCase())
             ) {
                 fits = true;
             }
             if (
                 filteringOption.french &&
-                word.french.toLowerCase().includes(lowerCaseSearch)
+                lowerCaseSearch.test(word.french.toLowerCase())
             ) {
                 fits = true;
             }
             if (
                 filteringOption.english &&
-                word.english.toLowerCase().includes(lowerCaseSearch)
+                lowerCaseSearch.test(word.english.toLowerCase())
             ) {
                 fits = true;
             }
             if (
                 filteringOption.author &&
-                word.author.toLowerCase().includes(lowerCaseSearch)
+                lowerCaseSearch.test(word.author.toLowerCase())
             ) {
                 fits = true;
             }
@@ -76,15 +81,26 @@
 
     // Sort filtered words
     function sort(): void {
+        if (search) {
+            sortBy = 'relevance';
+        } else {
+            sortBy = 'date';
+        }
         filteredWords.sort((a: DibiWord, b: DibiWord) => {
             let diff: number;
             switch (sortBy) {
+                case "relevance":
+                    diff = relevance(a, b);
+                    break;
                 case "dibi":
                     diff = a.dibi.localeCompare(b.dibi);
+                    break;
                 case "french":
                     diff = a.french.localeCompare(b.french);
+                    break;
                 case "date":
                     diff = a.date.localeCompare(b.date);
+                    break;
             }
             if (sortOrder === "asc") {
                 return diff;
@@ -92,6 +108,47 @@
                 return -diff;
             }
         });
+    }
+
+    // Rework this shitty function
+    function relevance(a: DibiWord, b: DibiWord): number {
+        let expression = search.toLowerCase();
+
+        if (expression === a.dibi.toLowerCase() ||expression === a.french.toLowerCase() ||expression === a.english.toLowerCase()) {
+            return 1000;
+        }
+        
+        if (expression === b.dibi.toLowerCase() ||expression === b.french.toLowerCase() ||expression === b.english.toLowerCase()) {
+            return -1000;
+        }
+
+        let aScore = 0;
+        let bScore = 0;
+
+        for (let length = 1; length <= expression.length; length++) {
+            for (let pos = 0; pos < expression.length - length; pos++) {
+                if (expression.slice(pos, pos+length) === a.dibi.toLowerCase()) {
+                    aScore += length * length;
+                }
+                if (expression.slice(pos, pos+length) === b.dibi.toLowerCase()) {
+                    bScore += length * length;
+                }
+                if (expression.slice(pos, pos+length) === a.french.toLowerCase()) {
+                    aScore += length * length;
+                }
+                if (expression.slice(pos, pos+length) === b.french.toLowerCase()) {
+                    bScore += length * length;
+                }
+                if (expression.slice(pos, pos+length) === a.english.toLowerCase()) {
+                    aScore += length * length;
+                }
+                if (expression.slice(pos, pos+length) === b.english.toLowerCase()) {
+                    bScore += length * length;
+                }
+            }
+        }
+
+        return bScore- aScore;
     }
 
     // Once words filtered and sorted, take a bunch of them to display
@@ -115,37 +172,37 @@
 </script>
 
 <div class="container fc">
-    {#if fetchingWords === "fetching"}
-        <span>Chargement des mots...</span>
-    {:else if fetchingWords === "ok"}
-        <div class="search f">
-            {#if detailedSearch}
-                <div class="detailed-search" />
-            {:else}
-                <div class="simple-search f">
-                    <div class="simple-search-bar">
-                        <input
-                            id="inputSimpleSearch"
-                            class="input-simple-search"
-                            type="text"
-                            placeholder="Rechercher"
-                            bind:value={search}
-                            on:input={(event) => {
-                                setSearch(event);
-                                debounce(filter)();
-                            }}
-                        />
-                        <div class="cross" />
-                    </div>
-                    <div class="more f">
-                        <img
-                            src="/public/chevron-down-solid.svg"
-                            alt="Bouton plus de paramètres de recherche"
-                        />
-                    </div>
+    <div class="search f">
+        {#if detailedSearch}
+            <div class="detailed-search" />
+        {:else}
+            <div class="simple-search f">
+                <div class="simple-search-bar">
+                    <input
+                        id="inputSimpleSearch"
+                        class="input-simple-search"
+                        type="text"
+                        placeholder="Rechercher"
+                        bind:value={search}
+                        on:input={(event) => {
+                            setSearch(event);
+                            debounce(filter)();
+                        }}
+                    />
+                    <div class="cross" />
                 </div>
-            {/if}
-        </div>
+                <div class="more f">
+                    <img
+                        src="/public/chevron-down-solid.svg"
+                        alt="Bouton plus de paramètres de recherche"
+                    />
+                </div>
+            </div>
+        {/if}
+    </div>
+    {#if $fetchingWords === "fetching"}
+        <span>Chargement des mots...</span>
+    {:else if $fetchingWords === "ok"}
         <div class="list">
             {#each wordToDisplay as word}
                 <Word {word} />

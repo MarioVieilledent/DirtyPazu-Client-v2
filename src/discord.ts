@@ -2,16 +2,24 @@ import { writable, type Writable } from "svelte/store";
 import { LOCAL_STORAGE_DISCORD_USER } from "./types";
 
 export let discordConnected: Writable<boolean> = writable(false);
-export let discordUser: Writable<DicordUser> = writable<DicordUser>();
+export let user: Writable<User> = writable<User>();
 
 const savedDiscordUser = localStorage.getItem(LOCAL_STORAGE_DISCORD_USER);
 if (savedDiscordUser) {
     discordConnected.set(true);
-    discordUser.set(JSON.parse(savedDiscordUser) as DicordUser);
+    user.set(JSON.parse(savedDiscordUser) as User);
 }
 
-export function getDiscordAvatarUrl(di: DicordUser): string {
-    return `https://cdn.discordapp.com/avatars/${di.id}/${di.avatar}.png`
+export function getDiscordAvatarUrl(user: User): string {
+    return user ? `https://cdn.discordapp.com/avatars/${user.discord.id}/${user.discord.avatar}.png` : '';
+}
+
+type User = {
+    discord: DicordUser,
+    roles: Role[],
+    xp: number,
+    money: number,
+    connections: string[]
 }
 
 type DicordUser = {
@@ -30,3 +38,5 @@ type DicordUser = {
     premium_type: number;
     avatar_decoration: string;
 }
+
+type Role = 'default' | 'admin' | string;

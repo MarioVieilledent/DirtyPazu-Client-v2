@@ -4,11 +4,11 @@ import { writable, type Writable } from "svelte/store";
 export const LOCAL_STORAGE_DISCORD_USER: string = 'discordUser';
 
 // Dev debug
-export const dev: boolean = false;
+export const dev: boolean = true;
 
 // Gestion des pages
-export let currentPage: Writable<Page> = writable('home')
-export type Page = 'home' | 'dict' | 'discordAuth' | 'discordAccount';
+export type Page = 'home' | 'dict' | 'suggest' | 'discordAuth' | 'discordAccount';
+export let currentPage: Writable<Page> = writable('home');
 
 // Pour le noms des différentes pages
 export type PageName = 'Infos' | 'Flag' | 'Dibi-infos' | 'Dibi-dict' | 'Dibi-grammar-rules' | 'Dibi-add-word' | 'Dibi-mc' | 'Logs';

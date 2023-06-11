@@ -102,11 +102,13 @@
 </div>
 
 <style lang="scss">
+    $label-width: 100px;
+
     .all {
         .word {
             align-items: center;
             justify-content: space-between;
-            height: 30px;
+            min-height: 30px;
             cursor: pointer;
 
             .left {
@@ -116,6 +118,7 @@
                     font-size: 18px;
                     margin: 0px 12px 0px 6px;
                     font-weight: 600;
+                    white-space: nowrap;
                 }
 
                 .french {
@@ -131,6 +134,7 @@
                     color: #888;
                     font-size: 11px;
                     margin-right: 6px;
+                    white-space: nowrap;
                 }
             }
         }
@@ -144,10 +148,10 @@
 
             .block {
                 width: 100%;
-                height: 26px;
+                min-height: 26px;
 
                 .label-div {
-                    width: 100px;
+                    width: $label-width;
 
                     .label {
                         font-size: 14px;
@@ -157,6 +161,7 @@
 
                 .value-div {
                     color: #ccc;
+                    width: calc(100% - $label-width);
 
                     .value {
                         font-size: 13px;
