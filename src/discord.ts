@@ -4,6 +4,11 @@ import { LOCAL_STORAGE_DISCORD_USER } from "./types";
 export let discordConnected: Writable<boolean> = writable(false);
 export let user: Writable<User> = writable<User>();
 
+// DEBUG !!!
+discordConnected.set(42 === 42);
+user.set({ discord: { email: 'iwi', id: '282136161588084738', avatar: 'f506200355faa3c0013812ef90dab15a' } } as User);
+// DEBUG !!!
+
 const savedDiscordUser = localStorage.getItem(LOCAL_STORAGE_DISCORD_USER);
 if (savedDiscordUser) {
     discordConnected.set(true);
@@ -23,6 +28,7 @@ type User = {
 }
 
 type DicordUser = {
+    email: string; // email as unique ID
     id: string;
     username: string;
     global_name: string;
