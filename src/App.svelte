@@ -72,7 +72,7 @@
         width: $left-width;
         height: 100%;
         background-color: #252321;
-        overflow-y: auto;
+        overflow: auto;
       }
 
       .right {

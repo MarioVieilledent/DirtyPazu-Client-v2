@@ -15,9 +15,22 @@ export type PageName = 'Infos' | 'Flag' | 'Dibi-infos' | 'Dibi-dict' | 'Dibi-gra
 
 // Général
 export type PartOfSpeech = 'Noun' | 'Pronoun' | 'Verb' | 'Adjective' | 'Adverb' | 'Preposition' | 'Conjonction' | 'Interjection' | 'SpiritWord' | 'FunctionParticule' | 'TransformationParticule';
+export const partsOfSpeech = [
+    {english: 'Noun', french: 'Nom'},
+    {english: 'Pronoun', french: 'Pronom'},
+    {english: 'Verb', french: 'Verbe'},
+    {english: 'Adjective', french: 'Adjectif'},
+    {english: 'Adverb', french: 'Adverbe'},
+    {english: 'Preposition', french: 'Préposition'},
+    {english: 'Conjonction', french: 'Conjonction'},
+    {english: 'Interjection', french: 'Interjection'},
+    {english: 'SpiritWord', french: 'Mot d\'esprit'},
+    {english: 'FunctionParticule', french: 'Particule de fonction'},
+    {english: 'TransformationParticule', french: 'Particule de transformation'}
+];
 
 // Pour le dictionnaire
-export interface DibiWord {
+export type DibiWord = {
     _id?: string;
     dibi: string;
     french: string;
@@ -26,6 +39,13 @@ export interface DibiWord {
     author?: string;
     date?: string;
     description?: string;
+}
+
+export type FilteringOption = {
+    dibi: boolean;
+    french: boolean;
+    english: boolean;
+    author: boolean;
 }
 
 export const DetailedPartOfSpeech: any = {

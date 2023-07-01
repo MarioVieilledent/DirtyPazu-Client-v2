@@ -134,6 +134,7 @@
                     color: #888;
                     font-size: 11px;
                     margin-right: 6px;
+                    margin-left: 12px;
                     white-space: nowrap;
                 }
             }

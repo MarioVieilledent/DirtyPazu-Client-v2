@@ -22,3 +22,25 @@ export function loadDictionary(): void {
             fetchingWords.set("error");
         });
 }
+
+type SuggestionState = 'suggested' | 'refused' | 'archived' | 'added';
+
+export type Suggestion = {
+    state: SuggestionState;
+    versions: SuggestVersion[];
+    author: string; // email of Discord user
+}
+
+export type SuggestVersion = {
+    versionNumber: number;
+    words: DibiWord[];
+    upVote: string[]; // emails of Discord users
+    downVote: string[]; // emails of Discord users
+    thread: Message[];
+}
+
+export type Message = {
+    author: string; // email of Discord user
+    message: string;
+    date: Date;
+}
