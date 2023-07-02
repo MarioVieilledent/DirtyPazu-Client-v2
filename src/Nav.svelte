@@ -8,21 +8,30 @@
 </script>
 
 <div class="nav fc">
-    <button class="block" on:click={() => setPageTo("home")}>
+    <button class={$currentPage === 'home' ? 'block-selected' : 'block'} on:click={() => setPageTo("home")}>
         <span>Menu</span>
     </button>
-    <button class="block" on:click={() => setPageTo("dict")}>
+    <button class={$currentPage === 'dict' ? 'block-selected' : 'block'} on:click={() => setPageTo("dict")}>
         <span>Dictionnaire</span>
     </button>
+    <!-- <button class={$currentPage === 'translate' ? 'block-selected' : 'block'} on:click={() => setPageTo("translate")}>
+        <span>Translate</span>
+    </button> -->
     {#if $discordConnected}
-        <button class="block" on:click={() => setPageTo("suggest")}>
-            <span>Proposer</span>
-        </button>
+    <button class={$currentPage === 'suggest' ? 'block-selected' : 'block'} on:click={() => setPageTo("suggest")}>
+        <span>Proposer</span>
+    </button>
+    <button class={$currentPage === 'vote' ? 'block-selected' : 'block'} on:click={() => setPageTo("vote")}>
+        <span>Voter</span>
+    </button>
     {/if}
 </div>
 
 <style lang="scss">
     .nav {
+        button {
+            margin: 6px 6px 0px 6px ;
+        }
 
         .block {
             span {
@@ -30,8 +39,15 @@
             }
         }
 
+        .block-selected {
+            background-color: #404249;
+            span {
+                color: #dbdee1;
+            }
+        }
+
         .block:hover {
-            background-color: #36373D;
+            background-color: #36373d;
             span {
                 color: #dbdee1;
             }

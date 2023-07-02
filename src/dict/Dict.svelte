@@ -35,12 +35,8 @@
         }, 200);
     });
 
-    // Fetching dictionary
-    $: {
-        if ($fetchingWords === "ok") {
-            filter();
-        }
-    }
+    // Start filtering only when words are gathered
+    $: $fetchingWords === "ok" ? filter() : {};
 
     // Filter words taking in account filtering options
     const filter = () => {
@@ -52,9 +48,9 @@
     // Sort filtered words
     function sort(): void {
         if (search) {
-            sortBy = 'relevance';
+            sortBy = "relevance";
         } else {
-            sortBy = 'date';
+            sortBy = "date";
         }
         filteredWords = sortDict(filteredWords, sortBy, sortOrder, search);
     }

@@ -2,12 +2,13 @@ import { writable, type Writable } from "svelte/store";
 
 // Local storage
 export const LOCAL_STORAGE_DISCORD_USER: string = 'discordUser';
+export const LOCAL_STORAGE_CURRENT_SUGGESTION: string = 'currentSuggestion';
 
 // Dev debug
 export const dev: boolean = true;
 
 // Gestion des pages
-export type Page = 'home' | 'dict' | 'suggest' | 'discordAuth' | 'discordAccount';
+export type Page = 'home' | 'dict' | 'suggest' | 'vote' | 'translate' | 'discordAuth' | 'discordAccount';
 export let currentPage: Writable<Page> = writable('home');
 
 // Pour le noms des différentes pages
@@ -15,19 +16,21 @@ export type PageName = 'Infos' | 'Flag' | 'Dibi-infos' | 'Dibi-dict' | 'Dibi-gra
 
 // Général
 export type PartOfSpeech = 'Noun' | 'Pronoun' | 'Verb' | 'Adjective' | 'Adverb' | 'Preposition' | 'Conjonction' | 'Interjection' | 'SpiritWord' | 'FunctionParticule' | 'TransformationParticule';
-export const partsOfSpeech = [
-    {english: 'Noun', french: 'Nom'},
-    {english: 'Pronoun', french: 'Pronom'},
-    {english: 'Verb', french: 'Verbe'},
-    {english: 'Adjective', french: 'Adjectif'},
-    {english: 'Adverb', french: 'Adverbe'},
-    {english: 'Preposition', french: 'Préposition'},
-    {english: 'Conjonction', french: 'Conjonction'},
-    {english: 'Interjection', french: 'Interjection'},
-    {english: 'SpiritWord', french: 'Mot d\'esprit'},
-    {english: 'FunctionParticule', french: 'Particule de fonction'},
-    {english: 'TransformationParticule', french: 'Particule de transformation'}
-];
+
+// For stats and naming
+export let partsOfSpeech: {[key: string]: {french: string, nbWords: number}} = {
+    Noun: { french: 'Nom', nbWords: 0 },
+    Pronoun: { french: 'Pronom', nbWords: 0 },
+    Verb: { french: 'Verbe', nbWords: 0 },
+    Adjective: { french: 'Adjectif', nbWords: 0 },
+    Adverb: { french: 'Adverbe', nbWords: 0 },
+    Preposition: { french: 'Préposition', nbWords: 0 },
+    Conjonction: { french: 'Conjonction', nbWords: 0 },
+    Interjection: { french: 'Interjection', nbWords: 0 },
+    SpiritWord: { french: 'Mot d\'esprit', nbWords: 0 },
+    FunctionParticule: { french: 'Particule de fonction', nbWords: 0 },
+    TransformationParticule: { french: 'Particule de transformation', nbWords: 0 }
+};
 
 // Pour le dictionnaire
 export type DibiWord = {

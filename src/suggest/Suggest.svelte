@@ -3,7 +3,12 @@
     import { filterDict, sortDict } from "../dict/dictFunctions";
     import type { Suggestion } from "../dictionary";
     import { discordConnected, user } from "../discord";
-    import { partsOfSpeech, type DibiWord } from "../types";
+    import {
+        partsOfSpeech,
+        type DibiWord,
+        LOCAL_STORAGE_CURRENT_SUGGESTION,
+        dev,
+    } from "../types";
 
     let suggestion: Suggestion = {
         state: "suggested",
@@ -18,9 +23,24 @@
         ],
         author: $user.discord.email,
     };
+    const lscs = window.localStorage.getItem(LOCAL_STORAGE_CURRENT_SUGGESTION);
+    if (lscs) {
+        suggestion = JSON.parse(lscs) as Suggestion;
+    }
+
     addWord();
 
     let closeWords: any = [];
+
+    // Saves suggestion in localStorage
+    function saveSuggestion(): void {
+        setTimeout(() => {
+            window.localStorage.setItem(
+                LOCAL_STORAGE_CURRENT_SUGGESTION,
+                JSON.stringify(suggestion)
+            );
+        }, 100);
+    }
 
     function addWord(): void {
         suggestion.versions[0].words.push({
@@ -66,7 +86,7 @@
                 "asc",
                 dibiWordWanted
             );
-            closeWords = [...closeWords, ...closeDibiWords.slice(0, 10)];
+            closeWords = [...closeWords, ...closeDibiWords];
         }
     }
 
@@ -84,18 +104,32 @@
                 "asc",
                 dibiWordWanted
             );
-            closeWords = [...closeWords, ...closeFrenchWords.slice(0, 10)];
+            closeWords = [...closeWords, ...closeFrenchWords];
         }
     }
 
-    function sendSuggestion(): void {}
+    function sendSuggestion(): void {
+        setTimeout(() => {
+            console.log(suggestion);
+            let apiUrl = dev ? "http://localhost:5000/" : window.location.href;
+            fetch(apiUrl + "suggest", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(suggestion),
+            })
+                .then((d) => d.json())
+                .then((res) => {
+                    console.log(res);
+                });
+        }, 100);
+    }
 </script>
 
 <div class="content fc">
     {#if $discordConnected}
         <h1>Proposition</h1>
-        <span>Proposer un ou plusieurs mots dibi</span>
         <div class="suggest fc">
+            <h2>Proposer un ou plusieurs mots dibi</h2>
             {#each suggestion.versions[0].words as word, index}
                 <div class="word fc">
                     <div class="dibi-partOfSpeech f">
@@ -104,15 +138,19 @@
                             type="text"
                             class={word.partOfSpeech}
                             bind:value={word.dibi}
-                            on:change={() => loadCloseWords()}
+                            on:change={() => {
+                                loadCloseWords();
+                                saveSuggestion();
+                            }}
                         />
                         <select
                             class={word.partOfSpeech}
                             bind:value={word.partOfSpeech}
+                            on:change={() => saveSuggestion()}
                         >
-                            {#each partsOfSpeech as pos}
-                                <option class={pos.english} value={pos.english}
-                                    >{pos.french}</option
+                            {#each Object.entries(partsOfSpeech) as [key, val]}
+                                <option class={key} value={key}
+                                    >{val.french}</option
                                 >
                             {/each}
                         </select>
@@ -122,34 +160,50 @@
                             placeholder="Français"
                             type="text"
                             bind:value={word.french}
-                            on:change={() => loadCloseWords()}
+                            on:change={() => {
+                                loadCloseWords();
+                                saveSuggestion();
+                            }}
                         />
                         <input
                             placeholder="Anglais"
                             type="text"
                             bind:value={word.english}
+                            on:change={() => saveSuggestion()}
                         />
                     </div>
                     <div class="description f">
                         <textarea
                             placeholder="Description"
                             bind:value={word.description}
+                            on:change={() => saveSuggestion()}
                         />
                     </div>
                     {#if suggestion.versions[0].words.length > 1}
-                        <button on:click={() => removeWord(index)}
-                            >Remove</button
+                        <button
+                            on:click={() => {
+                                removeWord(index);
+                                saveSuggestion();
+                            }}>Remove</button
                         >
                     {/if}
                 </div>
             {/each}
-            <button on:click={() => addWord()}>New word</button>
+            <button
+                on:click={() => {
+                    addWord();
+                    saveSuggestion();
+                }}>New word</button
+            >
             <div class="close-words fc">
                 <div class="separator" />
                 {#if closeWords.length > 0}
-                    {#each closeWords as closeWord}
-                        <Word word={closeWord} />
-                    {/each}
+                    <h2>Mots existants</h2>
+                    <div class="close-words-list">
+                        {#each closeWords as closeWord}
+                            <Word word={closeWord} />
+                        {/each}
+                    </div>
                     <div class="separator" />
                 {/if}
             </div>
@@ -166,6 +220,10 @@
         height: 100%;
         padding: 6px;
         overflow: auto;
+
+        h2 {
+            font-size: 18px;
+        }
 
         .suggest {
             align-items: flex-start;
@@ -194,6 +252,12 @@
 
             .close-words {
                 width: 100%;
+
+                .close-words-list {
+                    width: 100%;
+                    max-height: 400px;
+                    overflow: auto;
+                }
             }
         }
     }
@@ -204,5 +268,8 @@
     textarea {
         margin: 0px 6px 6px 0px;
         width: 200px;
+        padding: 3px 6px;
+        border: none;
+        border-radius: 6px;
     }
 </style>

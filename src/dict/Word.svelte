@@ -8,12 +8,45 @@
     // More information
     let moreInfo: boolean = false;
 
-    function formatDate(date: string): string {
+    function formatShortDate(date: string): string {
         const d = new Date(date);
         const day = String(d.getDate()).padStart(2, "0");
         const month = String(d.getMonth() + 1).padStart(2, "0");
         const year = String(d.getFullYear()).slice(-2);
         return `${day}/${month}/${year}`;
+    }
+
+    function formatDate(dateString: string): string {
+        const date = new Date(dateString);
+        const now = new Date();
+
+        if (isSameDay(date, now)) {
+            if (isSameDay(date, now, -1)) {
+                return "hier";
+            }
+            return `aujourd'hui à ${formatTime(date)}`;
+        }
+
+        const day = ("0" + date.getDate()).slice(-2);
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const year = date.getFullYear();
+        const time = formatTime(date);
+
+        return `${day}/${month}/${year} à ${time}`;
+    }
+
+    function isSameDay(date1: Date, date2: Date, offset = 0): boolean {
+        return (
+            date1.getDate() === date2.getDate() + offset &&
+            date1.getMonth() === date2.getMonth() &&
+            date1.getFullYear() === date2.getFullYear()
+        );
+    }
+
+    function formatTime(date: Date): string {
+        const hours = ("0" + date.getHours()).slice(-2);
+        const minutes = ("0" + date.getMinutes()).slice(-2);
+        return `${hours}h${minutes}`;
     }
 </script>
 
@@ -30,7 +63,7 @@
             <span class="french">{word.french}</span>
         </div>
         <div class="right">
-            <span class="date">{formatDate(word.date)}</span>
+            <span class="date">{formatShortDate(word.date)}</span>
         </div>
     </div>
     {#if moreInfo}
@@ -93,10 +126,18 @@
                         <span class="label">Date d'ajout</span>
                     </div>
                     <div class="value-div">
-                        <span class="value">{word.date}</span>
+                        <span class="value">{formatDate(word.date)}</span>
                     </div>
                 </div>
             {/if}
+            <div class="block f">
+                <div class="label-div">
+                    <a href="/wordId?id={word._id}" target="_blank">JSON</a>
+                </div>
+                <div class="value-div">
+                    <span class="value">{word._id}</span>
+                </div>
+            </div>
         </div>
     {/if}
 </div>
