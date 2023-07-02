@@ -6,10 +6,12 @@
   import Home from "./home/Home.svelte";
   import Dict from "./dict/Dict.svelte";
   import Suggest from "./suggest/Suggest.svelte";
+  import Vote from "./suggest/Vote.svelte";
+  import Translator from "./translate/Translator.svelte";
 
   import { currentPage } from "./types";
   import { onMount } from "svelte";
-  import { loadDictionary } from "./dictionary";
+  import { loadDictionary, loadSuggestions } from "./dictionary";
 
   let discordAuthCode: string;
 
@@ -20,8 +22,10 @@
     $currentPage = "dict";
   }
 
+  // When web app is loading
   onMount(() => {
     loadDictionary();
+    loadSuggestions();
   });
 </script>
 
@@ -40,6 +44,10 @@
         <Dict />
       {:else if $currentPage === "suggest"}
         <Suggest />
+      {:else if $currentPage === "vote"}
+        <Vote />
+        <!-- {:else if $currentPage === "translate"}
+        <Translator /> -->
       {:else if $currentPage === "discordAuth"}
         <DiscordAuth code={discordAuthCode} />
       {:else if $currentPage === "discordAccount"}
@@ -71,7 +79,7 @@
       .left {
         width: $left-width;
         height: 100%;
-        background-color: #252321;
+        background-color: #2b2d31;
         overflow: auto;
       }
 
