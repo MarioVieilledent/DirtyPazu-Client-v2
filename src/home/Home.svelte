@@ -16,7 +16,7 @@
 </script>
 
 <div class="container">
-    <h2>V2 du dictionnaire en ligne</h2>
+    <h1>V2 du dictionnaire</h1>
     <ul style="margin-left: 36px;">
         <li>Recodé en Svelte pour de meilleures perfomances navigateur et un code plus simple</li>
         <li>Ajout de la proposition de mots</li>
@@ -61,7 +61,10 @@
 
 <style lang="scss">
     .container {
+        width: 100%;
+        height: 100%;
         padding: 12px;
+        overflow: auto;
 
         h2 {
             margin-top: 12px;
