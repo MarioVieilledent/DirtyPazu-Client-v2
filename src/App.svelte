@@ -7,7 +7,6 @@
   import Dict from "./dict/Dict.svelte";
   import Suggest from "./suggest/Suggest.svelte";
   import Vote from "./suggest/Vote.svelte";
-  import Translator from "./translate/Translator.svelte";
 
   import { currentPage } from "./types";
   import { onMount } from "svelte";
@@ -33,9 +32,9 @@
   <div class="top f">
     <Header />
   </div>
-  <div class="bottom f">
+  <div class="middle f">
     <div class="left">
-      <Nav />
+      <Nav display="vertical" />
     </div>
     <div class="right">
       {#if $currentPage === "home"}
@@ -46,8 +45,6 @@
         <Suggest />
       {:else if $currentPage === "vote"}
         <Vote />
-        <!-- {:else if $currentPage === "translate"}
-        <Translator /> -->
       {:else if $currentPage === "discordAuth"}
         <DiscordAuth code={discordAuthCode} />
       {:else if $currentPage === "discordAccount"}
@@ -55,10 +52,14 @@
       {/if}
     </div>
   </div>
+  <div class="bottom">
+    <Nav display="horizontal" />
+  </div>
 </div>
 
 <style lang="scss">
   $top-height: 50px;
+  $bottom-height: 44px;
   $left-width: 200px;
 
   .all {
@@ -72,7 +73,7 @@
       background-color: #151311;
     }
 
-    .bottom {
+    .middle {
       width: 100%;
       height: calc(100% - $top-height);
 
@@ -86,6 +87,35 @@
       .right {
         width: calc(100% - $left-width);
         height: 100%;
+      }
+    }
+
+    .bottom {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    .all {
+      .top {
+        display: none;
+      }
+
+      .middle {
+        height: calc(100% - $bottom-height);
+
+        .left {
+          display: none;
+        }
+
+        .right {
+          width: 100%;
+        }
+      }
+
+      .bottom {
+        display: flex;
+        height: $top-height;
       }
     }
   }

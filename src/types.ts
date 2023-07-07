@@ -8,7 +8,7 @@ export const LOCAL_STORAGE_CURRENT_SUGGESTION: string = 'currentSuggestion';
 export const dev: boolean = true;
 
 // Gestion des pages
-export type Page = 'home' | 'dict' | 'suggest' | 'vote' | 'translate' | 'discordAuth' | 'discordAccount';
+export type Page = 'home' | 'dict' | 'suggest' | 'vote' | 'discordAuth' | 'discordAccount';
 export let currentPage: Writable<Page> = writable('home');
 
 // Pour le noms des différentes pages
