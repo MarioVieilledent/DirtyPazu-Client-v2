@@ -28,7 +28,7 @@
     <br>
     <span>Ce dictionnaire est constitué d'un <a href="https://github.com/MarioVieilledent/DirtyPazu-Server-v2" target="_blank">serveur</a> proposant une api simple et d'une <a href="https://github.com/MarioVieilledent/DirtyPazu-Client-v2" target="_blank">web app</a> pour l'interfacage. La base de données est enregistré sur MongoDB Cloud et est privée.</span>
 
-    {#if $fetchingWords}
+    {#if $fetchingWords === 'ok'}
         {@const dictSize = words.length}
 
         <h2>Mot random</h2>
