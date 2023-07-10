@@ -4,19 +4,14 @@ import { LOCAL_STORAGE_DISCORD_USER } from "./types";
 export let discordConnected: Writable<boolean> = writable(false);
 export let user: Writable<User> = writable<User>();
 
-// DEBUG !!!
-discordConnected.set(42 === 42);
-user.set({ discord: { email: 'iwi', id: '282136161588084738', avatar: 'f506200355faa3c0013812ef90dab15a' } } as User);
-// DEBUG !!!
-
 const savedDiscordUser = localStorage.getItem(LOCAL_STORAGE_DISCORD_USER);
 if (savedDiscordUser) {
-    discordConnected.set(true);
-    user.set(JSON.parse(savedDiscordUser) as User);
+    // discordConnected.set(true);
+    // user.set(JSON.parse(savedDiscordUser) as User);
 }
 
 export function getDiscordAvatarUrl(user: User): string {
-    return user ? `https://cdn.discordapp.com/avatars/${user.discord.id}/${user.discord.avatar}.png` : '';
+    return (user?.discord?.id && user?.discord?.avatar) ? `https://cdn.discordapp.com/avatars/${user.discord.id}/${user.discord.avatar}.png` : '';
 }
 
 type User = {

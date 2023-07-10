@@ -4,14 +4,11 @@
     user,
     getDiscordAvatarUrl,
   } from "./discord";
-    import { currentPage } from "./types";
+    import { currentPage, urlRedirect } from "./types";
 
-    const urlProd = 'https://discord.com/api/oauth2/authorize?client_id=1115564047048392754&redirect_uri=https%3A%2F%2Fdibi.onrender.com%2Fauth&response_type=code&scope=identify%20email'; 
-    const urlNodejs = 'https://discord.com/api/oauth2/authorize?client_id=1115564047048392754&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fauth&response_type=code&scope=identify%20email'; 
-    const ulrSvelte = 'https://discord.com/api/oauth2/authorize?client_id=1115564047048392754&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fauth&response_type=code&scope=identify%20email'; 
 
   function login() {
-    window.location.href = ulrSvelte;
+    window.location.href = urlRedirect;
   }
 </script>
 

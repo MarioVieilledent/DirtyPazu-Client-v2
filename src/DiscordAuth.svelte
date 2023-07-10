@@ -9,14 +9,18 @@
         let apiUrl = dev
             ? "http://localhost:5000/"
             : window.location.origin + "/";
+
         fetch(apiUrl + "exchange-code?code=" + code)
             .then((d) => d.json())
             .then((res) => {
+                if (res.err) {
+                console.log(res.err);
+                } else {
                 localStorage.setItem(
                     LOCAL_STORAGE_DISCORD_USER,
                     JSON.stringify(res)
                 );
-                $user = res;
+                // $user = res;
                 console.log(res);
                 $discordConnected = true;
 
@@ -31,6 +35,7 @@
 
                 // Change page
                 $currentPage = "discordAccount";
+                }
             })
             .catch((err) => {
                 console.error(err);
