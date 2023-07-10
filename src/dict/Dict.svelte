@@ -97,7 +97,7 @@
                 </div>
                 <div class="more f">
                     <img
-                        src="/public/chevron-down-solid.svg"
+                        src="/chevron-down-solid.svg"
                         alt="Bouton plus de paramètres de recherche"
                     />
                 </div>
